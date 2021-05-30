@@ -1,3 +1,11 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat May 29 21:09:12 2021
+
+@author: dongting
+"""
+
+# Install pyfirmata and upload firmata to your arduino board first
 import pyfirmata
 import time
 import numpy
