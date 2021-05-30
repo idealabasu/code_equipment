@@ -1,8 +1,7 @@
-import numpy as np
+import numpy
 import urx
 import time
-
-import numpy as np
+import math
 
 def Init_ur5(ur5_port):
     try:
@@ -39,20 +38,20 @@ def rotating_ur5_z(ur5,angle, v, a,wait=False):
     ur5.set_pose(current_pose,vel = v,acc = a,wait=wait)
   
 # for ur5e
-moving_vector_left = np.array((0.001,0,0))
-moving_vector_right = np.array((-0.001,0,0))
-moving_vector_forward = np.array((0,-0.001,0))
-moving_vector_backward = np.array((0,0.001,0))
-moving_vector_up = np.array((0,0,0.001))
-moving_vector_down = np.array((0,0,-0.001))
+moving_vector_left = numpy.array((0.001,0,0))
+moving_vector_right = numpy.array((-0.001,0,0))
+moving_vector_forward = numpy.array((0,-0.001,0))
+moving_vector_backward = numpy.array((0,0.001,0))
+moving_vector_up = numpy.array((0,0,0.001))
+moving_vector_down = numpy.array((0,0,-0.001))
 
 #for ur5-cb
-moving_vector_left = np.array((0.001,0.001,0))*math.sqrt(2)/2
-moving_vector_right = -np.array((0.001,0.001,0))*math.sqrt(2)/2
-moving_vector_forward = np.array((0.001,-0.001,0))*math.sqrt(2)/2
-moving_vector_backward = np.array((-0.001,0.001,0))*math.sqrt(2)/2
-moving_vector_up = np.array((0,0,0.001))
-moving_vector_down = np.array((0,0,-0.001))
+moving_vector_left = numpy.array((0.001,0.001,0))*math.sqrt(2)/2
+moving_vector_right = -numpy.array((0.001,0.001,0))*math.sqrt(2)/2
+moving_vector_forward = numpy.array((0.001,-0.001,0))*math.sqrt(2)/2
+moving_vector_backward = numpy.array((-0.001,0.001,0))*math.sqrt(2)/2
+moving_vector_up = numpy.array((0,0,0.001))
+moving_vector_down = numpy.array((0,0,-0.001))
 
 
 ur5e = Init_ur5("192.168.1.103")
