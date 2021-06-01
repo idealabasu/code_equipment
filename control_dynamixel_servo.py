@@ -3,9 +3,6 @@
 Created on Mon May 31 18:20:27 2021
 
 @author: dongting
-
-Download the Dynamixel SDK at https://emanual.robotis.com/docs/en/software/dynamixel/dynamixel_sdk/download/
-After install the library:
 """
 
 import os
@@ -15,11 +12,28 @@ import numpy
 import time
 
        
+
 """
 Dynamixel Initialaztion
 
 """
 
+# if os.name == 'nt':
+#     import msvcrt
+#     def getch():
+# #        return msvcrt.getch().decode()
+#         return msvcrt.getch()
+# else:
+#     import sys, tty, termios
+#     fd = sys.stdin.fileno()
+#     old_settings = termios.tcgetattr(fd)
+#     def getch():
+#         try:
+#             tty.setraw(sys.stdin.fileno())
+#             ch = sys.stdin.read(1)
+#         finally:
+#             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+#         return ch
 
 from dynamixel_sdk import *      
 
@@ -47,7 +61,9 @@ PROTOCOL_VERSION            = 2.0               # See which protocol version is 
 DXL_ID_1                     = 0             # Dynamixel ID : 1
 
 BAUDRATE                    = 57600             # Dynamixel default baudrate : 57600
+#DEVICENAME                  = '/dev/ttyUSB0'    # Check which port is being used on your controller
 DEVICENAME                  = 'COM4'    # Check which port is being used on your controller
+                                                # ex) Windows: "COM1"   Linux: "/dev/ttyUSB0" Mac: "/dev/tty.usbserial-*"
 
 TORQUE_ENABLE               = 1                 # Value for enabling the torque
 TORQUE_DISABLE              = 0                 # Value for disabling the torque
@@ -70,8 +86,6 @@ if portHandler.openPort():
     print("Succeeded to open the port")
 else:
     print("Failed to open the port")
-    print("Press any key to terminate...")
-    getch()
     quit()
 
 
@@ -80,8 +94,6 @@ if portHandler.setBaudRate(BAUDRATE):
     print("Succeeded to change the baudrate")
 else:
     print("Failed to change the baudrate")
-    print("Press any key to terminate...")
-    getch()
     quit()
 
 # Enable Dynamixel Torque
@@ -93,12 +105,37 @@ elif dxl_error != 0:
 else:
     print("Dynamixel_1 has been successfully connected")
     
-dxl_comm_result_1, dxl_error_1 = packetHandler.write1ByteTxRx(portHandler, DXL_ID_1, ADDR_PRO_TORQUE_ENABLE, TORQUE_ENABLE)
+
+# Position Control
 dxl_comm_result_1, dxl_error_1 = packetHandler.write1ByteTxRx(portHandler, DXL_ID_1, ADDR_PRO_OPERATING_MODE,DXL_OPERATING_is_POSITION)
 
+dxl_comm_result_1, dxl_error_1 = packetHandler.write1ByteTxRx(portHandler, DXL_ID_1, ADDR_PRO_TORQUE_ENABLE, TORQUE_ENABLE)
+# dxl_comm_result_1, dxl_error_1 = packetHandler.write1ByteTxRx(portHandler, DXL_ID_1, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE)
 
-DXL_PROFILE_SPEED = 100
-DXL_GOAL_POSITION = 100
+
+DXL_PROFILE_SPEED = 200
+DXL_GOAL_POSITION = 1500
 
 dxl_comm_result_1, dxl_error_1 = packetHandler.write4ByteTxRx(portHandler, DXL_ID_1, ADDR_PRO_PRPFILE_VELOCITY,DXL_PROFILE_SPEED)
 dxl_comm_result_1, dxl_error_1 = packetHandler.write4ByteTxRx(portHandler, DXL_ID_1, ADDR_PRO_GOAL_POSITION, DXL_GOAL_POSITION)
+
+
+
+# Velocity Control
+# Still developing this part......
+dxl_comm_result_1, dxl_error_1 = packetHandler.write1ByteTxRx(portHandler, DXL_ID_1, ADDR_PRO_TORQUE_ENABLE, TORQUE_ENABLE)
+
+dxl_comm_result_1, dxl_error_1 = packetHandler.write1ByteTxRx(portHandler, DXL_ID_1, ADDR_PRO_TORQUE_ENABLE, TORQUE_DISABLE)
+
+dxl_comm_result_1, dxl_error_1 = packetHandler.write1ByteTxRx(portHandler, DXL_ID_1, ADDR_PRO_OPERATING_MODE,DXL_OPERATING_is_VELOCITY)
+
+
+# # dxl_comm_result_1, dxl_error_1 = packetHandler.write1ByteTxRx(portHandler, DXL_ID_1, 98,0)
+
+# dxl_comm_result_1, dxl_error_1 = packetHandler.write1ByteTxRx(portHandler, DXL_ID_1, 44, 255)
+
+# # dxl_comm_result_1, dxl_error_1 = packetHandler.write1ByteTxRx(portHandler, DXL_ID_1, 112, 4720)
+
+# dxl_comm_result_1, dxl_error_1 = packetHandler.write1ByteTxRx(portHandler, DXL_ID_1,104,100)
+
+# dxl_comm_result_1, dxl_error_1 = packetHandler.write1ByteTxRx(portHandler, DXL_ID_1,65,1)
