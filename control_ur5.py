@@ -1,7 +1,10 @@
+# for ur5e use the following version  of urx: https://github.com/jkur/python-urx/tree/SW3.5/urx
+
 import numpy
 import urx
 import time
 import math
+
 
 def Init_ur5(ur5_port):
     try:
@@ -28,6 +31,12 @@ def move_ur5(ur5,moving_vector,v,a,wait=False):
     current_pose.pos[:] += moving_vector
     ur5.movel(current_pose,vel=v,acc=a,wait=wait)
 
+def move_ur5e(ur5,moving_vector,v,a,wait=False,relative=False, threshold=None):
+    current_pose = ur5.get_pose()
+    current_pose.pos[:] += moving_vector
+    ur5.movel(current_pose,vel=v,acc=a,wait=wait,relative=False, threshold=None)
+
+    
 def rotating_ur5_z(ur5,angle, v, a,wait=False):
     #in degreee
     import math
