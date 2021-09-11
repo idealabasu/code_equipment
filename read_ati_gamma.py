@@ -69,6 +69,7 @@ def get_data(s,message):
 
 counts_per_unit = numpy.array([1000000]*3+[1000000]*3)
 TCP_IP = "192.168.1.122"
+#TCP_IP = "192.168.1.121"
 TCP_PORT = 49152
 BUFFER_SIZE = 1024
 order = 'big'
@@ -76,3 +77,4 @@ order = 'big'
 ati_gamma,message = Init_Ati_Sensor(TCP_IP,TCP_PORT,BUFFER_SIZE,order)
 calib_data = Calibrate_Ati_Sensor(ati_gamma,TCP_IP, TCP_PORT,BUFFER_SIZE,message)    
 force = get_data(ati_gamma,message)-calib_data
+print(force)
