@@ -25,9 +25,9 @@ void loop() {
           digitalWrite(DIR, HIGH);
           digitalWrite(ENA, HIGH);
           digitalWrite(PUL, HIGH);
-          delayMicroseconds(5);
+          delay(1);
           digitalWrite(PUL, LOW);
-          delayMicroseconds(10);
+          delay(5);
         }
         Serial.println(5);
         break;
@@ -38,9 +38,9 @@ void loop() {
           digitalWrite(DIR, LOW);
           digitalWrite(ENA, HIGH);
           digitalWrite(PUL, HIGH);
-          delayMicroseconds(5);
+          delay(1);
           digitalWrite(PUL, LOW);
-          delayMicroseconds(10);
+          delay(5);
         }
         Serial.println(5);
         break;

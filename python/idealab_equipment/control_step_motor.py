@@ -22,9 +22,9 @@ def Initial_Arduino():
 
 step_motor = Initial_Arduino()
 
-max_n = round(90/(360/400))
-S_data = 1
 
+max_n = round(180/(360/400))
+S_data = 1
 
 for i in range (0,max_n):
     xn = str(S_data).encode()
