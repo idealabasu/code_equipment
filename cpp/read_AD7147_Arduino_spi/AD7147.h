@@ -184,6 +184,12 @@
 #define CS_SETUP_SINGLE_NEG(reg)		(uint16_t)(reg & ~(0b1111 << 12) | (0b0010 << 12))
 #define CS_SETUP_DIFF(reg)				(uint16_t)(reg & ~(0b1111 << 12) | (0b0011 << 12))
 
+#define WORD  unsigned int
+#define DWORD unsigned long int
+
+
+
+
 class AD7147 {
   public:
     AD7147();
@@ -205,6 +211,10 @@ class AD7147 {
     
     uint16_t getDeviceID();
     bool checkStatus();
+    WORD ButtonStatus = 0;
+    WORD DecodeButtons(const WORD HighLimitStatusRegister);    
+    uint16_t ServiceAD7147Isr();
+    
     uint16_t calculateSiderPosition();
     uint16_t readAllSensors1();
 //    void readtest(const uint16_t RegisterStartAddress, const byte NumberOfRegisters, uint16_t DataBuffer, const uint16_t OffsetInBuffer);

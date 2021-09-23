@@ -20,14 +20,13 @@ void setup() {
 void loop() {
   // put your main code here, to run repeatedly:
   //  if(slider.update()){
-  Serial.print("Device id:");
-  Serial.println(slider.getDeviceID());
-  Serial.print("all sensor:");
-  Serial.println(slider.readAllSensors1());
-  Serial.print("sider posotion:");
-  Serial.println(slider.calculateSiderPosition());
-  Serial.print("check status:");
-  Serial.println(slider.checkStatus());
+  Serial.println("START OF ONE CYCLE");
+  
+//  Serial.print("Device id:");
+//  Serial.println(slider.getDeviceID());
+//  Serial.print("button status:");
+  Serial.println(slider.ServiceAD7147Isr());
 
-  delay(1000);  
+  Serial.println("END OF ONE CYCLE");
+  delay(500);  
 }

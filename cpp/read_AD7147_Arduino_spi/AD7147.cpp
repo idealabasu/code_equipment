@@ -1,6 +1,9 @@
 #include "AD7147.h"
 #include <SPI.h>
 
+#define WORD  unsigned int
+#define DWORD unsigned long int
+
 AD7147::AD7147() {
 
 }
@@ -12,10 +15,15 @@ bool AD7147::begin(int CS_PIN, int INT_PIN) {
   pinMode(INT_PIN, INPUT_PULLUP);
   digitalWrite(CS_PIN, HIGH);
 
+  char pinValue = digitalRead(INT_PIN);
+  Serial.print("INT  PIN VALUE: ");
+  Serial.print(pinValue);
+
   SPI.begin();
 
   //make sure we can get device id
   if (getDeviceID() == 0) {
+    Serial.println("Can not connect");
     return false;
   }
 
@@ -29,9 +37,13 @@ bool AD7147::begin(int CS_PIN, int INT_PIN) {
   //-------------------------Bank 1 Registers---------------------------------//
   //--------------------------------------------------------------------------//
   //Initialisation of the first register bank but not the AMBCOMPCTL_REG0
-  AD7147Registers[PWR_CONTROL] = 0x02B2;	//Register 0x00
+  AD7147Registers[PWR_CONTROL] = 0x82B2;	//Register 0x00
+  
   this->write(PWR_CONTROL, 1, AD7147Registers, PWR_CONTROL);
 
+  AD7147Registers[STAGE_CAL_EN] = 0x000;  //Register 0x02
+  this->write(STAGE_CAL_EN, 1, AD7147Registers, STAGE_CAL_EN);
+  
   this->read(STAGE_LOW_LIMIT_INT, 3, AD7147Registers, STAGE_LOW_LIMIT_INT);
   AD7147Registers[AMB_COMP_CTRL0] = 0x3233;	//Register 0x02
   AD7147Registers[AMB_COMP_CTRL1] = 0x0819;	//Register 0x03
@@ -51,10 +63,59 @@ bool AD7147::begin(int CS_PIN, int INT_PIN) {
 
 bool AD7147::checkStatus(){
   AD7147Registers[PWR_CONTROL] = 0x02B2;  //Register 0x00
-  read(PWR_CONTROL, 1, AD7147Registers, PWR_CONTROL);
-  
-  return true;
+  read(PWR_CONTROL, 1, AD7147Registers, PWR_CONTROL);  
   };
+
+WORD AD7147::DecodeButtons(const WORD HighLimitStatusRegister){
+  WORD ButtonStatusValue=0;
+//  byte HighLimitStatusRegister = 0x09;
+  Serial.println(ButtonStatusValue);
+  if ((HighLimitStatusRegister & 0x0001) == 0x0001)
+    ButtonStatusValue |= 0x0001;  
+  if ((HighLimitStatusRegister & 0x0002) == 0x0002)
+    ButtonStatusValue |= 0x0002;
+  if ((HighLimitStatusRegister & 0x0004) == 0x0004)
+    ButtonStatusValue |= 0x0004;
+  if ((HighLimitStatusRegister & 0x0008) == 0x0008)
+    ButtonStatusValue |= 0x0008;
+  if ((HighLimitStatusRegister & 0x0010) == 0x0010)
+    ButtonStatusValue |= 0x0010;
+  if ((HighLimitStatusRegister & 0x0020) == 0x0020)
+    ButtonStatusValue |= 0x0020;
+  if ((HighLimitStatusRegister & 0x0040) == 0x0040)
+    ButtonStatusValue |= 0x0040;
+  if ((HighLimitStatusRegister & 0x0080) == 0x0080)
+    ButtonStatusValue |= 0x0080;
+  if ((HighLimitStatusRegister & 0x0100) == 0x0100)
+    ButtonStatusValue |= 0x0100;
+  if ((HighLimitStatusRegister & 0x0200) == 0x0200)
+    ButtonStatusValue |= 0x0200;
+  if ((HighLimitStatusRegister & 0x0400) == 0x0400)
+    ButtonStatusValue |= 0x0400;
+  if ((HighLimitStatusRegister & 0x0800) == 0x0800)
+    ButtonStatusValue |= 0x0800;
+  Serial.print("internal button status: ") ;
+  Serial.println(ButtonStatusValue) ;
+  return (ButtonStatusValue);
+}
+
+uint16_t AD7147::ServiceAD7147Isr()
+{
+  //Read thresholds and proximity registers
+  read(STAGE_LOW_LIMIT_INT, 2, AD7147Registers, STAGE_LOW_LIMIT_INT); 
+
+  if (((AD7147Registers[STAGE_LOW_LIMIT_INT] & POWER_UP_INTERRUPT) != 0x0000) 
+  &&
+  ((AD7147Registers[STAGE_HIGH_LIMIT_INT]& POWER_UP_INTERRUPT) == 0x0000)){
+    forceCalibration();   }
+  else{
+//    ButtonStatus=DecodeButtons(AD7147Registers[STAGE_HIGH_LIMIT_INT]);    
+    ButtonStatus=DecodeButtons(AD7147Registers[STAGE_HIGH_LIMIT_INT]);
+    Serial.println(ButtonStatus,BIN);  
+    Serial.println(ButtonStatus);  
+}
+}
+
 
 void AD7147::setIntTypeThreshold() {
   AD7147Registers[STAGE_LOW_INT_EN] = 0xFFFF & ~(1 << 15); //Register 0x05
