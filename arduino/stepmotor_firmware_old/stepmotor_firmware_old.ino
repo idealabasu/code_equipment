@@ -20,7 +20,7 @@ void loop() {
     //    Serial.println(incomingByte-38,DEC);
     switch (incomingByte) {
       
-      case '1': //CW     
+      case '5': //CW     
         for (int i = 0; i < 16; i++) {
           digitalWrite(DIR, HIGH);
           digitalWrite(ENA, HIGH);
@@ -32,7 +32,7 @@ void loop() {
         Serial.println(5);
         break;
         
-      case '2':
+      case '7':
         //CCW
         for (int i = 0; i < 16; i++) {
           digitalWrite(DIR, LOW);
@@ -42,7 +42,7 @@ void loop() {
           digitalWrite(PUL, LOW);
           delay(1);
         }
-        Serial.println(5);
+        Serial.println(7);
         break;
         
       case '3': //STOP

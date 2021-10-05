@@ -11,20 +11,25 @@ import serial
 import time
 
 
-def Initial_Arduino():
+def Initial_Arduino(port_num):
     global Ard
-    Ard = serial.Serial('COM8',115200,timeout=0.1)
+    Ard = serial.Serial(port_num,115200,timeout=0.1)
     time.sleep(2)
     Ard.flush()
     Ard.flushOutput()
     Ard.flushInput()
     return Ard
 
-step_motor = Initial_Arduino()
+step_motor = Initial_Arduino('COM8')
 
 
-max_n = round(180/(360/400))
-S_data = 1
+# S_data = 4
+# xn = str(S_data).encode()
+# xn += "\n".encode()
+# step_motor.write(xn)
+
+max_n = round(60/(360/400))
+S_data = 2
 
 for i in range (0,max_n):
     xn = str(S_data).encode()
