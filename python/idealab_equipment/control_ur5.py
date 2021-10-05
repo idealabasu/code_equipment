@@ -54,13 +54,13 @@ moving_vector_backward = numpy.array((0,0.001,0))
 moving_vector_up = numpy.array((0,0,0.001))
 moving_vector_down = numpy.array((0,0,-0.001))
 
-#for ur5-cb
-moving_vector_left = numpy.array((0.001,0.001,0))*math.sqrt(2)/2
-moving_vector_right = -numpy.array((0.001,0.001,0))*math.sqrt(2)/2
-moving_vector_forward = numpy.array((0.001,-0.001,0))*math.sqrt(2)/2
-moving_vector_backward = numpy.array((-0.001,0.001,0))*math.sqrt(2)/2
-moving_vector_up = numpy.array((0,0,0.001))
-moving_vector_down = numpy.array((0,0,-0.001))
+##for ur5-cb
+#moving_vector_left = numpy.array((0.001,0.001,0))*math.sqrt(2)/2
+#moving_vector_right = -numpy.array((0.001,0.001,0))*math.sqrt(2)/2
+#moving_vector_forward = numpy.array((0.001,-0.001,0))*math.sqrt(2)/2
+#moving_vector_backward = numpy.array((-0.001,0.001,0))*math.sqrt(2)/2
+#moving_vector_up = numpy.array((0,0,0.001))
+#moving_vector_down = numpy.array((0,0,-0.001))
 
 
 ur5e = Init_ur5("192.168.1.103")
@@ -71,4 +71,4 @@ ur5e = Init_ur5("192.168.1.103")
 loc=ur5e.get_pose()
 
 move_ur5(ur5e,moving_vector_up,0.01,1,wait=False)
-rotating_ur5_z(ur5e,10,1,wait=False)
+#rotating_ur5_z(ur5e,10,1,wait=False)
