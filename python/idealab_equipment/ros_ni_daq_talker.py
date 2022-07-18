@@ -16,12 +16,11 @@ import roslibpy
 
 daq_read_task = nidaqmx.Task()
 daq_calibration_task = nidaqmx.Task()
-daq_sample_rate = 1
+daq_sample_rate = 1000
 chans_in = 4
 buffer_in_size = 1
 bufsize_callback = buffer_in_size
 buffer_in_size_cfg = round(buffer_in_size * 1)  # clock configuration
-
 
 buffer_in = numpy.zeros((chans_in, buffer_in_size))
 daq_data = numpy.zeros((chans_in, 1))  # will contain a first column with zeros but that's fine
@@ -36,9 +35,14 @@ client = roslibpy.Ros(host='192.168.1.164', port=9090)
 client.on_ready(lambda: log.info('On ready has been triggered'))
 client.run()
 
+#  roslibpy.Topic(client, package_name, package_name/msg_name)
+# Those things should be the same as the package you are using. eg  to check if the package exists, use 'rospack find /ni_daq'
+# check the msg type, use `rosmsg show ni_4_forces', msg_name should be the same as the ni_4_forces.msg in ni_daq/msg folder
 talker = roslibpy.Topic(client, '/ni_daq', 'ni_daq/ni_4_forces')
 
-
+# to communicate with the ros on ubuntu machine, use the following command to start rosbridge first
+# roslaunch rosbridge_server rosbridge_websocket.launch
+# check: https://github.com/RobotWebTools/rosbridge_suite
 
 def configure_daq():
     sample_rate = daq_sample_rate
@@ -49,20 +53,19 @@ def configure_daq():
     daq_read_task.timing.cfg_samp_clk_timing(rate=sample_rate, sample_mode = nidaqmx.constants.AcquisitionType.CONTINUOUS, samps_per_chan=buffer_in_size_cfg)
 
 
-def reading_task_callback(task_idx, event_type, num_samples, callback_data):  # bufsize_callback is passed to num_samples
-    global seq    
+def reading_task_callback(task_idx, event_type, num_samples, callback_data):  # bufsize_callback is passed to num_samples  
     global daq_data
     global buffer_inwe
 
     if running:
-        seq+=1
         # # It may be wiser to read slightly more than num_samples here, to make sure one does not miss any sample,
         # # see: https://documentation.help/NI-DAQmx-Key-Concepts/contCAcqGen.html
         buffer_in = numpy.zeros((chans_in, num_samples))  # double definition ???
         reader.read_many_sample(buffer_in, num_samples, timeout=constants.WAIT_INFINITELY)
         daq_data = numpy.append(daq_data,buffer_in,axis=1)
-        header1 = roslibpy.Header(frame_id='', seq=seq, stamp=roslibpy.Time.now())
+        # in this case we convert the data type to the same as defined in ni_4_force.msg.
         talker.publish(roslibpy.Message({'c1':buffer_in[0].tolist(),'c2':buffer_in[1].tolist(),'c3':buffer_in[2].tolist(),'c4':buffer_in[3].tolist()}))
+
     return 0  # Absolutely needed for this callback to be well defined (see nidaqmx doc).
     
 def daq_acquisition():
@@ -77,8 +80,6 @@ def daq_acquisition():
 def daq_calibration():
     daq_calib_data = daq_calibration_task.read()
     return daq_calib_data
-
-
 
 configure_daq()
 
@@ -100,7 +101,6 @@ daq_calibration = numpy.mean(daq_force)
 daq_calibration_task.close()
 
 daq_acquisition()
-seq=0
 daq_read_task.start()
 
 try:
